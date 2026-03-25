@@ -12,7 +12,7 @@ const watchlistRoutes = require("./routes/WatchlistRoutes");
 const app = express();
 
 app.use(cors({
-  origin: ["http://localhost:3000","http://localhost:3001","https://main.d3tv0bgdl8zjki.amplifyapp.com","https://main.d25hu1o8d1jzcb.amplifyapp.com"],
+  origin: ["http://localhost:3000","http://localhost:3001","https://zerodha-frontend-fdv0.onrender.com","https://zerodha-dashboard-4tv0.onrender.com"],
   credentials: true
 }));
 

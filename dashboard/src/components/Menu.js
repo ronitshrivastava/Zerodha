@@ -8,7 +8,7 @@ const Menu = () => {
 
   // Fetch logged in user
   useEffect(() => {
-    axios.get("http://13.61.112.94:3002/currentUser", {
+    axios.get("https://zerodha-backend-swdj.onrender.com/currentUser", {
       withCredentials: true
     })
     .then(res => setUser(res.data.user))

@@ -8,7 +8,7 @@ const Holdings = () => {
 
   useEffect(() => {
     axios
-      .get("http://13.61.112.94:3002/holdings", {
+      .get("https://zerodha-backend-swdj.onrender.com/holdings", {
         withCredentials: true,
       })
       .then((res) => {

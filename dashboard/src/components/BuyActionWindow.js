@@ -26,7 +26,7 @@ const ActionWindow = ({ uid, mode }) => {
       setLoading(true);
 
       const res = await axios.post(
-        "http://13.61.112.94:3002/orders",
+        "https://zerodha-backend-swdj.onrender.com/orders",
         {
           name: uid,
           qty: Number(qty),

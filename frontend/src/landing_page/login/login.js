@@ -31,7 +31,7 @@
 
       try {
         const { data } = await axios.post(
-          "http://13.61.112.94:3002/login",
+          "https://zerodha-backend-swdj.onrender.com/login",
           { email, password },
           { withCredentials: true }
         );
@@ -41,7 +41,7 @@
           localStorage.setItem("user", JSON.stringify(data.user));
 
           setTimeout(() => {
-            window.location.href = "https://main.d25hu1o8d1jzcb.amplifyapp.com"; // redirect
+            window.location.href = "https://zerodha-dashboard-4tv0.onrender.com"; // redirect
           }, 1000);
         } else {
           handleError(data.message);

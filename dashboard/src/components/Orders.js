@@ -6,7 +6,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
 
  useEffect(() => {
-  axios.get("http://13.61.112.94:3002/myOrders", { withCredentials: true })
+  axios.get("https://zerodha-backend-swdj.onrender.com/myOrders", { withCredentials: true })
     .then(res => {
       if (res.data.status) {
         setOrders(res.data.orders);
@@ -20,7 +20,7 @@ const Orders = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://13.61.112.94:3002/deleteOrder/${id}`, {
+      await axios.delete(`https://zerodha-backend-swdj.onrender.com/deleteOrder/${id}`, {
         withCredentials: true,
       });
 

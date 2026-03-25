@@ -33,7 +33,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://13.61.112.94:3002/signup",
+        "https://zerodha-backend-swdj.onrender.com/signup",
         {
           ...inputValue,
         },
@@ -44,7 +44,7 @@ const Signup = () => {
   handleSuccess(message);
 
   setTimeout(() => {
-     window.location.href = "https://main.d25hu1o8d1jzcb.amplifyapp.com";
+     window.location.href = "https://zerodha-dashboard-4tv0.onrender.com";
   }, 1000);
 } else {
   handleError(message);

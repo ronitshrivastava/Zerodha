@@ -8,7 +8,7 @@ const Account = () => {
 
   useEffect(() => {
     axios
-      .get("http://13.61.112.94:3002/currentUser", { withCredentials: true })
+      .get("https://zerodha-backend-swdj.onrender.com/currentUser", { withCredentials: true })
       .then((res) => {
         if (res.data.status) {
           setUser(res.data.user);
@@ -24,12 +24,12 @@ const Account = () => {
   // ✅ Logout Function
   const handleLogout = async () => {
     try {
-      await axios.get("http://13.61.112.94:3002/logout", {
+      await axios.get("https://zerodha-backend-swdj.onrender.com/logout", {
         withCredentials: true,
       });
 
       setUser(null);
-      window.location.href = "https://main.d3tv0bgdl8zjki.amplifyapp.com"; // redirect to login page
+      window.location.href = "https://zerodha-frontend-fdv0.onrender.com"; // redirect to login page
     } catch (error) {
       console.log("Logout failed", error);
     }
@@ -42,7 +42,7 @@ const Account = () => {
       <h2>You are not logged in</h2>
       <p>Please login to view your account details</p>
 
-      <a href="https://main.d3tv0bgdl8zjki.amplifyapp.com/login" className="login-btn">
+      <a href="https://zerodha-frontend-fdv0.onrender.com/login" className="login-btn">
         Login to your account
       </a>
     </div>

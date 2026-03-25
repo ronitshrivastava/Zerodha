@@ -7,7 +7,7 @@ const Positions = () => {
 
   useEffect(() => {
 
-    axios.get("http://13.61.112.94:3002/positions", {
+    axios.get("https://zerodha-backend-swdj.onrender.com/positions", {
       withCredentials: true
     })
     .then((res) => {
