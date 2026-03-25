@@ -1,9 +1,12 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 
 function OpenAccount() {
 
+    const navigate = useNavigate();
+
     const handleSignup = () => {
-        window.location.href = "/signup";
+        navigate("/signup");
     };
 
     return ( 
