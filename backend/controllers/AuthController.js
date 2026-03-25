@@ -3,41 +3,57 @@ const { createSecretToken } = require("../utils/secretToken");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-module.exports.Signup = async (req, res, next) => {
+module.exports.Signup = async (req, res) => {
   try {
     const { email, password, username, createdAt } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
-    if(!email){
-      return res.json({message:"Email is required"});
-    }
-    if(!username){
-      return res.json({message:"Username is required"});
-    }
-    if(!password){
-      return res.json({message:"Password is required"});
-    }
-  // const hashedPassword = await bcrypt.hash(password, 10);
-const user = await User.create({ 
-  email, 
-  password, 
-  username, 
-  createdAt 
-});
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      username,
+      createdAt,
+    });
+
     const token = createSecretToken(user._id);
+
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: "none",
-});
-    res
-      .status(201)
-      .json({ message: "User signed in successfully", success: true, user });
-    next();
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    return res.status(201).json({
+      message: "User signed up successfully",
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
