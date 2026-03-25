@@ -36,16 +36,20 @@ const Login = () => {
         { email, password }
       );
 
-      if (data.success) {
-        handleSuccess(data.message);
+    if (data.success) {
+  console.log("Saving token:", data.token);
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user));
 
-        setTimeout(() => {
-          window.location.href = "https://zerodha-dashboard-4tv0.onrender.com";
-        }, 1000);
-      } else {
+  console.log("Saved token now:", localStorage.getItem("token"));
+
+  handleSuccess(data.message);
+
+  setTimeout(() => {
+    window.location.href = `https://zerodha-dashboard-4tv0.onrender.com?token=${data.token}`;
+  }, 3000);
+} else {
         handleError(data.message || "Login failed");
       }
     } catch (error) {
@@ -54,6 +58,7 @@ const Login = () => {
     }
 
     setInputValue({ email: "", password: "" });
+    
   };
 
   return (
