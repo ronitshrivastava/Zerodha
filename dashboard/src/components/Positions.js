@@ -8,8 +8,10 @@ const Positions = () => {
   useEffect(() => {
 
     axios.get("https://zerodha-backend-swdj.onrender.com/positions", {
-      withCredentials: true
-    })
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+})
     .then((res) => {
       console.log(res.data);
       setAllPositions(res.data);

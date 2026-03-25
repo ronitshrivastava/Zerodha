@@ -17,7 +17,11 @@ const Funds = () => {
       try {
         const userRes = await axios.get(
           "https://zerodha-backend-swdj.onrender.com/currentUser",
-          { withCredentials: true }
+          {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
         );
 
         let balance = 0;
@@ -27,7 +31,11 @@ const Funds = () => {
 
         const holdingsRes = await axios.get(
           "https://zerodha-backend-swdj.onrender.com/holdings",
-          { withCredentials: true }
+          {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
         );
 
         let usedMargin = 0;

@@ -25,7 +25,11 @@ const Summary = () => {
         // 🔹 Get user
         const userRes = await axios.get(
           "https://zerodha-backend-swdj.onrender.com/currentUser",
-          { withCredentials: true }
+          {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
         );
 
         if (userRes.data.status) {
@@ -35,7 +39,11 @@ const Summary = () => {
         // 🔹 Get holdings
         const holdingsRes = await axios.get(
           "https://zerodha-backend-swdj.onrender.com/holdings",
-          { withCredentials: true }
+          {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
         );
 
         const holdings = holdingsRes.data;
@@ -54,7 +62,11 @@ const Summary = () => {
         // 🔹 Get PnL
         const pnlRes = await axios.get(
           "https://zerodha-backend-swdj.onrender.com/pnl",
-          { withCredentials: true }
+          {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
         );
 
         setPnl(pnlRes.data);

@@ -34,7 +34,11 @@ const ActionWindow = ({ uid, mode }) => {
           mode: mode,
           
         },
-        { withCredentials: true }
+        {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
       );
 
       setMessage({

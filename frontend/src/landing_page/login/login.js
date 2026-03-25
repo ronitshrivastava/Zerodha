@@ -33,12 +33,14 @@ const Login = () => {
     try {
       const { data } = await axios.post(
         "https://zerodha-backend-swdj.onrender.com/login",
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
 
       if (data.success) {
         handleSuccess(data.message);
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         setTimeout(() => {
           window.location.href = "https://zerodha-dashboard-4tv0.onrender.com";

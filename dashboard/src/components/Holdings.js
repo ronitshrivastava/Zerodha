@@ -8,9 +8,13 @@ const Holdings = () => {
 
   useEffect(() => {
     axios
-      .get("https://zerodha-backend-swdj.onrender.com/holdings", {
-        withCredentials: true,
-      })
+      .get("https://zerodha-backend-swdj.onrender.com/holdings",
+         {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
+    )
       .then((res) => {
         setAllHoldings(res.data);
       })

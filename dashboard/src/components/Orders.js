@@ -6,7 +6,11 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
 
  useEffect(() => {
-  axios.get("https://zerodha-backend-swdj.onrender.com/myOrders", { withCredentials: true })
+  axios.get("https://zerodha-backend-swdj.onrender.com/myOrders", {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+})
     .then(res => {
       if (res.data.status) {
         setOrders(res.data.orders);
@@ -21,8 +25,10 @@ const Orders = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://zerodha-backend-swdj.onrender.com/deleteOrder/${id}`, {
-        withCredentials: true,
-      });
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+  });
 
       setOrders(orders.filter((order) => order._id !== id));
     } catch (err) {

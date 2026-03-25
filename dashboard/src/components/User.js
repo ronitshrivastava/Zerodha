@@ -8,7 +8,11 @@ const Account = () => {
 
   useEffect(() => {
     axios
-      .get("https://zerodha-backend-swdj.onrender.com/currentUser", { withCredentials: true })
+      .get("https://zerodha-backend-swdj.onrender.com/currentUser", {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+})
       .then((res) => {
         if (res.data.status) {
           setUser(res.data.user);
@@ -25,8 +29,10 @@ const Account = () => {
   const handleLogout = async () => {
     try {
       await axios.get("https://zerodha-backend-swdj.onrender.com/logout", {
-        withCredentials: true,
-      });
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
 
       setUser(null);
       window.location.href = "https://zerodha-frontend-fdv0.onrender.com"; // redirect to login page

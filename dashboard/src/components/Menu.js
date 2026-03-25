@@ -8,9 +8,12 @@ const Menu = () => {
 
   // Fetch logged in user
   useEffect(() => {
-    axios.get("https://zerodha-backend-swdj.onrender.com/currentUser", {
-      withCredentials: true
-    })
+    axios.get("https://zerodha-backend-swdj.onrender.com/currentUser",
+      {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+})
     .then(res => setUser(res.data.user))
     .catch(err => console.log(err));
   },

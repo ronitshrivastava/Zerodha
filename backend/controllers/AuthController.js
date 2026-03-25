@@ -46,37 +46,37 @@ module.exports.Login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Incorrect email' });
+      return res.status(400).json({ message: "Incorrect email" });
     }
 
     const auth = await bcrypt.compare(password, user.password);
     if (!auth) {
-      return res.status(400).json({ message: 'Incorrect password or email' });
+      return res.status(400).json({ message: "Incorrect password or email" });
     }
 
     const token = createSecretToken(user._id);
 
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: "none",
-});
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     return res.status(200).json({
       message: "User logged in successfully",
       success: true,
+      token,
       user: {
         id: user._id,
         username: user.username,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
