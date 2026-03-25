@@ -7,7 +7,7 @@ function Hero() {
                 <img src='media/images/homeHero.png' alt='Hero Image' className='mb-5'/>
                 <h1 className='mt-5'>Invest in everything</h1>
                 <p>Online platform to invest in stocks, derivatives, mutualfunds, stocks and more</p>
-                <button className='p-2 btn btn-primary fs-5 mb-5 ' style={{width:"20%", margin:"0 auto"}}>SignUp Now</button>
+                <button className='p-2 btn btn-primary fs-5 mb-5 ' style={{width:"20%", margin:"0 auto"}}><a href='https://zerodha-frontend-fdv0.onrender.com/signup'>Signup Now</a></button>
             </div>
         </div>
      );
