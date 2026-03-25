@@ -9,48 +9,45 @@ const Account = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tokenFromUrl = params.get("token");
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-    if (tokenFromUrl) {
-      localStorage.setItem("token", tokenFromUrl);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+        if (!token) {
+          setLoading(false);
+          return;
+        }
 
-    const token = localStorage.getItem("token");
+        const res = await axios.get(`${API}/currentUser`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    axios
-      .get(`${API}/currentUser`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
         if (res.data.status) {
           setUser(res.data.user);
         }
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.log("Current user error:", err.response?.data || err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchUser();
   }, []);
 
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.get(`${API}/logout`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (token) {
+        await axios.get(`${API}/logout`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -64,7 +61,7 @@ const Account = () => {
 
   if (loading) return <h3>Loading...</h3>;
 
-  if (!user)
+  if (!user) {
     return (
       <div className="login-required">
         <h2>You are not logged in</h2>
@@ -78,6 +75,7 @@ const Account = () => {
         </a>
       </div>
     );
+  }
 
   return (
     <div className="account-container">

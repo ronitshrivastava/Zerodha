@@ -3,27 +3,41 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const Menu = () => {
-  const location = useLocation(); // get current URL path
+  const location = useLocation();
   const [user, setUser] = useState(null);
 
-  // Fetch logged in user
   useEffect(() => {
-    axios.get("https://zerodha-backend-swdj.onrender.com/currentUser",
-      {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-})
-    .then(res => setUser(res.data.user))
-    .catch(err => console.log(err));
-  },
-  
-   []);
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          return;
+        }
+
+        const res = await axios.get(
+          "https://zerodha-backend-swdj.onrender.com/currentUser",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (res.data.status) {
+          setUser(res.data.user);
+        }
+      } catch (err) {
+        console.log("Menu currentUser error:", err.response?.data || err.message);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const menuClass = "menu";
   const activeMenuClass = "menu selected";
 
-  // Map paths to index (optional, but useful for active class logic)
   const pathToIndex = {
     "/": 0,
     "/orders": 1,
@@ -31,10 +45,10 @@ const Menu = () => {
     "/positions": 3,
     "/funds": 4,
     "/apps": 5,
-    "/accounts": 6
+    "/accounts": 6,
   };
 
-  const selectedMenu = pathToIndex[location.pathname] || 0;
+  const selectedMenu = pathToIndex[location.pathname] ?? 0;
 
   return (
     <div className="menu-container">

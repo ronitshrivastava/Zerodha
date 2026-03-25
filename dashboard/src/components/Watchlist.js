@@ -23,21 +23,22 @@ const WatchList = () => {
   const [newStockPrice, setNewStockPrice] = useState("");
   const [user, setUser] = useState(null);
 
-  const token = localStorage.getItem("token");
-
-  const authConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
         const [holdingsRes, watchlistRes, userRes] = await Promise.all([
-          axios.get(`${API}/holdings`, authConfig),
-          axios.get(`${API}/watchlist`, authConfig),
-          axios.get(`${API}/currentUser`, authConfig),
+          axios.get(`${API}/holdings`, config),
+          axios.get(`${API}/watchlist`, config),
+          axios.get(`${API}/currentUser`, config),
         ]);
 
         setHoldings(holdingsRes.data || []);
@@ -48,10 +49,8 @@ const WatchList = () => {
       }
     };
 
-    if (token) {
-      fetchData();
-    }
-  }, [token]);
+    fetchData();
+  }, []);
 
   const handleAddStock = async () => {
     if (!newStockName.trim() || !newStockPrice.trim()) {
@@ -59,13 +58,25 @@ const WatchList = () => {
     }
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first");
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       const res = await axios.post(
         `${API}/watchlist/add`,
         {
           name: newStockName.trim(),
           price: Number(newStockPrice),
         },
-        authConfig
+        config
       );
 
       if (res.data.status) {
@@ -84,7 +95,19 @@ const WatchList = () => {
 
   const handleDeleteStock = async (id) => {
     try {
-      const res = await axios.delete(`${API}/watchlist/${id}`, authConfig);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first");
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const res = await axios.delete(`${API}/watchlist/${id}`, config);
 
       if (res.data.status) {
         setWatchlist((prev) => prev.filter((s) => s._id !== id));

@@ -2,54 +2,57 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Funds.css";
 
+const API = "https://zerodha-backend-swdj.onrender.com";
+
 const Funds = () => {
   const [userData, setUserData] = useState({
     balance: 0,
     availableMargin: 0,
     usedMargin: 0,
   });
-  const [showInput, setShowInput] = useState(""); // "add" or "withdraw" or ""
+  const [showInput, setShowInput] = useState("");
   const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Fetch user balance and holdings
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRes = await axios.get(
-          "https://zerodha-backend-swdj.onrender.com/currentUser",
-          {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-}
-        );
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const userRes = await axios.get(`${API}/currentUser`, config);
 
         let balance = 0;
         if (userRes.data.status) {
-          balance = userRes.data.user.balance;
+          balance = Number(userRes.data.user.balance || 0);
         }
 
-        const holdingsRes = await axios.get(
-          "https://zerodha-backend-swdj.onrender.com/holdings",
-          {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-}
-        );
+        const holdingsRes = await axios.get(`${API}/holdings`, config);
 
         let usedMargin = 0;
-        holdingsRes.data.forEach((stock) => {
-          usedMargin += stock.avg * stock.qty; // investment in holdings
+        (holdingsRes.data || []).forEach((stock) => {
+          usedMargin += Number(stock.avg || 0) * Number(stock.qty || 0);
         });
 
         setUserData({
-          balance: balance,
-          availableMargin: balance, // available margin same as balance
-          usedMargin: usedMargin,
+          balance,
+          availableMargin: balance,
+          usedMargin,
         });
       } catch (err) {
-        console.log(err);
+        console.log("Funds fetch error:", err.response?.data || err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -67,30 +70,51 @@ const Funds = () => {
   };
 
   const handleConfirm = async () => {
-    if (!amount || amount <= 0) return alert("Enter a valid amount");
+    if (!amount || Number(amount) <= 0) {
+      alert("Enter a valid amount");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login first");
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
     const url =
-      showInput === "add"
-        ? "https://zerodha-backend-swdj.onrender.com/add"
-        : "https://zerodha-backend-swdj.onrender.com/withdraw";
+      showInput === "add" ? `${API}/add` : `${API}/withdraw`;
 
     try {
-      const res = await axios.post(url, { amount }, { withCredentials: true });
+      const res = await axios.post(
+        url,
+        { amount: Number(amount) },
+        config
+      );
 
       if (res.data.status) {
+        const updatedBalance = Number(res.data.balance || 0);
+
         setUserData((prev) => ({
           ...prev,
-          balance: res.data.balance,
-          availableMargin: res.data.balance,
+          balance: updatedBalance,
+          availableMargin: updatedBalance,
         }));
+
         setShowInput("");
         setAmount("");
       } else {
-        alert(res.data.message);
+        alert(res.data.message || "Transaction failed");
       }
     } catch (err) {
-      console.log(err);
-      alert("Error processing transaction");
+      console.log("Funds transaction error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Error processing transaction");
     }
   };
 
@@ -99,19 +123,19 @@ const Funds = () => {
     setAmount("");
   };
 
+  if (loading) return <h3>Loading...</h3>;
+
   return (
     <div className="funds-page">
       <div className="funds-header card">
         <h2>Funds</h2>
         <p>Instant, zero-cost fund transfers with UPI</p>
-        
 
         <div className="balance">
           <div>
             <p>Available Margin</p>
             <h3>₹ {userData.availableMargin.toLocaleString()}</h3>
           </div>
-         
         </div>
 
         {!showInput && (
@@ -146,10 +170,10 @@ const Funds = () => {
       </div>
 
       <div className="summary-cards">
-         <div className="card">
-            <p>Used Margin</p>
-            <h4>₹ {userData.usedMargin.toLocaleString()}</h4>
-          </div>
+        <div className="card">
+          <p>Used Margin</p>
+          <h4>₹ {userData.usedMargin.toLocaleString()}</h4>
+        </div>
         <div className="card">
           <p>Available Cash</p>
           <h4>₹ {userData.balance.toLocaleString()}</h4>
@@ -164,10 +188,12 @@ const Funds = () => {
         </div>
       </div>
 
-      {/* Bottom CTA */}
       <div className="funds-footer card">
         <p>Start investing in commodities today</p>
-        <a href="https://zerodha-frontend-fdv0.onrender.com/signup" className="btn open-account">
+        <a
+          href="https://zerodha-frontend-fdv0.onrender.com/signup"
+          className="btn open-account"
+        >
           Open Account
         </a>
       </div>
