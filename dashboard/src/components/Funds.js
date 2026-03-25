@@ -159,7 +159,7 @@ const Funds = () => {
       {/* Bottom CTA */}
       <div className="funds-footer card">
         <p>Start investing in commodities today</p>
-        <a href="http://13.61.112.94:3002/signup" className="btn open-account">
+        <a href="https://main.d3tv0bgdl8zjki.amplifyapp.com/signup" className="btn open-account">
           Open Account
         </a>
       </div>
