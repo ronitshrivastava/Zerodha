@@ -1,115 +1,112 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [inputValue, setInputValue] = useState({
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    password: ""
   });
 
-  const { email, password } = inputValue;
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    setInputValue({ ...inputValue, [name]: value });
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
-
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "bottom-center",
-    });
-
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "bottom-center",
-    });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     try {
-      const { data } = await axios.post(
-        "https://zerodha-backend-swdj.onrender.com/login",
-        { email, password },
+      setLoading(true);
+
+      const res = await axios.post(
+        "https://zerodha-stock-trading-platform-qb0o.onrender.com/login",
+        formData,
         { withCredentials: true }
       );
 
-      if (data.success) {
-        handleSuccess(data.message);
+      // after successful login/signup
+      window.dispatchEvent(new Event("userLogin"));
 
-        setTimeout(() => {
-          window.location.href = "https://zerodha-dashboard-4tv0.onrender.com";
-        }, 1000);
-      } else {
-        handleError(data.message || "Login failed");
-      }
+      // Login success
+      window.location.href = "https://zerodha-stock-trading-platform-2-r26t.onrender.com";
+
     } catch (error) {
-      console.log("Login error:", error.response?.data || error.message);
-      handleError(error.response?.data?.message || "Server error");
-    }
 
-    setInputValue({ email: "", password: "" });
+      if (error.response?.status === 401) {
+        setMessage("Invalid email or password");
+      } else {
+        setMessage("Something went wrong");
+      }
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <div className="form_container">
-        <h2>Login Account</h2>
+    <div className="signup-wrapper d-flex align-items-center justify-content-center">
+      <div className="card signup-card shadow-lg p-4">
+        <h3 className="text-center mb-4 fw-bold">Login</h3>
+
+        {message && (
+          <div className="alert alert-danger py-2">
+            {message}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Email</label>
+
+          <div className="mb-3">
+            <label className="form-label">Email</label>
             <input
               type="email"
               name="email"
-              value={email}
-              placeholder="Enter your email"
-              onChange={handleOnChange}
+              className="form-control"
+              placeholder="Enter email"
               required
+              onChange={handleChange}
             />
           </div>
 
-          <div>
-            <label>Password</label>
+          <div className="mb-4">
+            <label className="form-label">Password</label>
             <input
               type="password"
               name="password"
-              value={password}
-              placeholder="Enter your password"
-              onChange={handleOnChange}
+              className="form-control"
+              placeholder="Enter password"
               required
+              onChange={handleChange}
             />
           </div>
 
-          <button type="submit">Submit</button>
-
-          <span>
-            Don't have an account? <Link to="/signup">Signup</Link>
-          </span>
+          <button
+            type="submit"
+            className="btn btn-primary w-100 fw-semibold"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+          <div className="text-center mt-3">
+            Don't have an account?{" "}
+            <span
+              style={{ color: "blue", cursor: "pointer", textDecoration: "none" }}
+              onClick={() => navigate("/signup")}
+            >
+              Signup
+            </span>
+          </div>
         </form>
       </div>
-
-      <ToastContainer
-        position="top"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="colored"
-        toastStyle={{
-          marginBottom: "170px",
-          borderRadius: "8px",
-          padding: "12px 18px",
-          paddingRight: "40px",
-          fontSize: "14px",
-          minWidth: "380px",
-        }}
-      />
-    </>
+    </div>
   );
 };
 
