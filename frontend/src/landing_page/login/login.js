@@ -1,113 +1,116 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+  import React, { useState } from "react";
+  import { Link } from "react-router-dom";
+  import axios from "axios";
+  import { ToastContainer, toast } from "react-toastify";
+  import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  const Login = () => {
+    const [inputValue, setInputValue] = useState({
+      email: "",
+      password: "",
     });
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
+    const { email, password } = inputValue;
 
-    try {
-      setLoading(true);
+    const handleOnChange = (e) => {
+      const { name, value } = e.target;
+      setInputValue({ ...inputValue, [name]: value });
+    };
 
-      const res = await axios.post(
-        "https://zerodha-stock-trading-platform-qb0o.onrender.com/login",
-        formData,
-        { withCredentials: true }
-      );
+ const handleError = (err) =>
+    toast.error(err, {
+      position: "bottom-center",
+    });
+  const handleSuccess = (msg) =>
+    toast.success(msg, {
+      position: "bottom-center",
+    });
 
-      // after successful login/signup
-      window.dispatchEvent(new Event("userLogin"));
+    const handleSubmit = async (e) => {
+      e.preventDefault();
 
-      // Login success
-      window.location.href = "https://zerodha-stock-trading-platform-2-r26t.onrender.com";
+      try {
+        const { data } = await axios.post(
+          "https://zerodha-backend-swdj.onrender.com/login",
+          { email, password },
+          { withCredentials: true }
+        );
 
-    } catch (error) {
+        if (data.success) {
+          handleSuccess(data.message);
+          localStorage.setItem("user", JSON.stringify(data.user));
 
-      if (error.response?.status === 401) {
-        setMessage("Invalid email or password");
-      } else {
-        setMessage("Something went wrong");
+          setTimeout(() => {
+            window.location.href = "https://zerodha-dashboard-4tv0.onrender.com"; // redirect
+          }, 1000);
+        } else {
+          handleError(data.message);
+        }
+      } catch (error) {
+        console.log(email, password);
+        console.log(error.response.data);
+        handleError(error.response?.data?.message || "Server error");
       }
 
-    } finally {
-      setLoading(false);
-    }
-  };
+      setInputValue({ email: "", password: "" });
+    };
 
-  return (
-    <div className="signup-wrapper d-flex align-items-center justify-content-center">
-      <div className="card signup-card shadow-lg p-4">
-        <h3 className="text-center mb-4 fw-bold">Login</h3>
-
-        {message && (
-          <div className="alert alert-danger py-2">
-            {message}
-          </div>
-        )}
-
+    return (
+      <>
+       
+      <div className="form_container">
+        <h2>Login Account</h2>
         <form onSubmit={handleSubmit}>
-
-          <div className="mb-3">
-            <label className="form-label">Email</label>
+          <div>
+            <label>Email</label>
             <input
               type="email"
               name="email"
-              className="form-control"
-              placeholder="Enter email"
+              value={email}
+              placeholder="Enter your email"
+              onChange={handleOnChange}
               required
-              onChange={handleChange}
             />
           </div>
-
-          <div className="mb-4">
-            <label className="form-label">Password</label>
+          <div>
+            <label>Password</label>
             <input
               type="password"
               name="password"
-              className="form-control"
-              placeholder="Enter password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={handleOnChange}
               required
-              onChange={handleChange}
             />
           </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary w-100 fw-semibold"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-          <div className="text-center mt-3">
-            Don't have an account?{" "}
-            <span
-              style={{ color: "blue", cursor: "pointer", textDecoration: "none" }}
-              onClick={() => navigate("/signup")}
-            >
-              Signu
-            </span>
-          </div>
+          
+          <button type="submit">Submit</button>
+          <span>
+            Don't have an account? <Link to={"/signup"}>Signup</Link>
+          </span>
         </form>
+        
       </div>
-    </div>
-  );
-};
+      <ToastContainer
+          position="top"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="colored"
+          toastStyle={{
+            marginBottom:"170px",
+            borderRadius: "8px",
+            padding: "12px 18px",
+            paddingRight: "40px",
+            fontSize: "14px",
+            minWidth: "380px"
+          }}
+        />
+      </>
+    );
+  };
 
-export default Login;
+  export default Login;
