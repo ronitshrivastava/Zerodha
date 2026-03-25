@@ -191,7 +191,7 @@ const Funds = () => {
       <div className="funds-footer card">
         <p>Start investing in commodities today</p>
         <a
-          href="https://zerodha-frontend-fdv0.onrender.com/signup"
+          href="https://zerodha-frontend-fdv0.onrender.com"
           className="btn open-account"
         >
           Open Account
