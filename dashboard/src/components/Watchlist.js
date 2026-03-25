@@ -21,9 +21,9 @@ const WatchList = () => {
     const fetchData = async () => {
       try {
         const [wlRes, holdingsRes] = await Promise.all([
-          axios.get("https://zerodha-frontend-fdv0.onrender.com/holdings", { withCredentials: true }),
-          axios.get("https://zerodha-frontend-fdv0.onrender.com/watchlist", { withCredentials: true }),
-          axios.get("https://zerodha-frontend-fdv0.onrender.com/currentUser", { withCredentials: true })
+          axios.get("https://zerodha-backend-swdj.onrender.com/holdings", { withCredentials: true }),
+          axios.get("https://zerodha-backend-swdj.onrender.com/watchlist", { withCredentials: true }),
+          axios.get("https://zerodha-backend-swdj.onrender.com/currentUser", { withCredentials: true })
         ]);
         setWatchlist(wlRes.data.watchlist || []);
         setHoldings(holdingsRes.data || []);
@@ -42,7 +42,7 @@ const WatchList = () => {
 
     try {
       const res = await axios.post(
-        "https://zerodha-frontend-fdv0.onrender.com/watchlist/add",
+        "https://zerodha-backend-swdj.onrender.com/watchlist/add",
         { name: newStockName.trim(), price: Number(newStockPrice) },
         { withCredentials: true }
       );
@@ -64,7 +64,7 @@ const WatchList = () => {
   // Delete stock
   const handleDeleteStock = async (id) => {
     try {
-      const res = await axios.delete(`https://zerodha-frontend-fdv0.onrender.com/watchlist/${id}`, { withCredentials: true });
+      const res = await axios.delete(`https://zerodha-backend-swdj.onrender.com/watchlist/${id}`, { withCredentials: true });
       if (res.data.status) setWatchlist((prev) => prev.filter((s) => s._id !== id));
     } catch (err) {
       console.log("Delete stock error:", err);
