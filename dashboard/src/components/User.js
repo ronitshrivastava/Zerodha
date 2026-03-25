@@ -53,7 +53,7 @@ const Account = () => {
       localStorage.removeItem("user");
       setUser(null);
 
-      window.location.href = "https://zerodha-frontend-fdv0.onrender.com/login";
+      window.location.href = "https://zerodha-frontend-fdv0.onrender.com";
     } catch (error) {
       console.log("Logout failed", error.response?.data || error.message);
     }
