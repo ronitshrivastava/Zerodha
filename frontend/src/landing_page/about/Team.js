@@ -12,8 +12,8 @@ function Team() {
       style={{ lineHeight: "1.8", fontSize: "1.2em" }}>
         <div className="col-lg-6 col-sm-12 p-3 text-center">
            <img src='media/images/Profile.jpeg' style={{borderRadius:"100%", width:"50%"}}/>
-           <h5 className='mt-5'>Nithin Kamath</h5>
-           <h6>Founder, CEO</h6>
+           <h5 className='mt-5'>Ronit Shrivastava</h5>
+           <h6>Website Owner</h6>
         </div>
         <div className="col-lg-6 col-sm-12 p-3">
             <p>
